@@ -1,2 +1,2 @@
 # Perceptron
-A simple perceptron model. Princiapl component of fedd-forward neural networks.
+A simple perceptron model. Principal component of fedd-forward neural networks.
