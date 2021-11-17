@@ -12,7 +12,8 @@ def sigmoid(z):
     return min(s, 1) if (s > 0.5) else 0
 
 def tanh(z):
-    pass
+    z -= 0.5
+    return round((m.exp(z) - m.exp(-z))/(m.exp(z) + m.exp(-z)))
 
 
 functions = {
@@ -22,6 +23,7 @@ functions = {
     'tanh': tanh,
 }
 
+
 class Perceptron:
     def __init__(self, alpha=0.001, max_iter=1000, activation='step'):
         self.alpha = alpha
@@ -30,7 +32,7 @@ class Perceptron:
         self.misses = []
         self.weights = None
 
-    def fit(self, X, y, mini=False):
+    def fit(self, X, y, mini=False, batch_size=0.05):
         #m: Samples. n: Features.
         m, n = X.shape
 
@@ -44,18 +46,21 @@ class Perceptron:
         iter = 0
         while iter < self.max_iter:
             loss = 0
+            if mini:
+                pass
 
-            for index, x in enumerate(X):
-                #Place bias term for each x
-                x = np.insert(x, 0 , 1).reshape(-1, 1)
-                
-                #Evaluate activation function: Dot product of parameters with weights
-                y_hat = self.activation(np.dot(x.T, w))
-                
-                #Update if missclassified
-                if y_hat - y[index] != 0:
-                    w += self.alpha * ((y[index] - y_hat) * x)
-                    loss += 1
+            else:
+                for index, x in enumerate(X):
+                    #Place bias term for each x
+                    x = np.insert(x, 0 , 1).reshape(-1, 1)
+                    
+                    #Evaluate activation function: Dot product of parameters with weights
+                    y_hat = self.activation(np.dot(x.T, w))
+                    
+                    #Update if missclassified
+                    if y_hat - y[index] != 0:
+                        w += self.alpha * ((y[index] - y_hat) * x)
+                        loss += 1
             
             misses.append(loss)
             iter += 1
@@ -63,10 +68,12 @@ class Perceptron:
         self.misses = misses
         self.weights = w
 
-    def predict(x):
+    def predict(X):
         #Returns some y
         pass
 
+    def score(X_test, y_test):
+        pass
 
 
 
