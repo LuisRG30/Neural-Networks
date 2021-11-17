@@ -1,17 +1,36 @@
 import numpy as np
+import math as m
 
 def step(z):
     return 1 if (z > 0) else 0
 
+def relu(z):
+    return min(z, 1) if (z > 0.5) else 0
+
+def sigmoid(z):
+    s = 1 / (1 + m.exp(-z + 0.5))
+    return min(s, 1) if (s > 0.5) else 0
+
+def tanh(z):
+    pass
+
+
+functions = {
+    'step': step,
+    'relu': relu,
+    'sigmoid': sigmoid,
+    'tanh': tanh,
+}
+
 class Perceptron:
-    def __init__(self, alpha=0.001, max_iter=1000, activation=step):
+    def __init__(self, alpha=0.001, max_iter=1000, activation='step'):
         self.alpha = alpha
         self.max_iter = max_iter
-        self.activation = activation
+        self.activation = functions[activation]
         self.misses = []
         self.weights = None
 
-    def fit(self, X, y):
+    def fit(self, X, y, mini=False):
         #m: Samples. n: Features.
         m, n = X.shape
 
@@ -24,7 +43,7 @@ class Perceptron:
         #Train
         iter = 0
         while iter < self.max_iter:
-            missed = 0
+            loss = 0
 
             for index, x in enumerate(X):
                 #Place bias term for each x
@@ -36,14 +55,17 @@ class Perceptron:
                 #Update if missclassified
                 if y_hat - y[index] != 0:
                     w += self.alpha * ((y[index] - y_hat) * x)
-                    missed += 1
+                    loss += 1
             
-            misses.append(missed)
+            misses.append(loss)
             iter += 1
         
         self.misses = misses
         self.weights = w
 
+    def predict(x):
+        #Returns some y
+        pass
 
 
 
