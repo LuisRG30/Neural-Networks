@@ -68,12 +68,26 @@ class Perceptron:
         self.misses = misses
         self.weights = w
 
-    def predict(X):
+    def predict(self, X):
         #Returns some y
-        pass
+        y_hat = []
+        for x in X:
+            y_hat.append(self.activation(np.dot(x.T, self.weights)))
+        return y_hat
 
-    def score(X_test, y_test):
-        pass
+    def score(self, X_test, y_test):
+        N = len(X_test)
+        if N != len(y_test):
+            raise Exception("Inputs X and y have different dimensions.")
+
+        n = 0
+        for index, x in enumerate(X_test):
+            if self.activation(np.dot(x.T, self.weights)) != y_test[index]:
+                n += 1
+            
+        return n / N
+        
+
 
 
 
