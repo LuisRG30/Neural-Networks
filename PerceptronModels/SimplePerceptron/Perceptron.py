@@ -15,12 +15,15 @@ def tanh(z):
     z -= 0.5
     return round((m.exp(z) - m.exp(-z))/(m.exp(z) + m.exp(-z)))
 
+def svm(z):
+    return round(z)
 
 functions = {
     'step': step,
     'relu': relu,
     'sigmoid': sigmoid,
     'tanh': tanh,
+    'svm': svm
 }
 
 
@@ -28,6 +31,7 @@ class Perceptron:
     def __init__(self, alpha=0.001, max_iter=1000, activation='step'):
         self.alpha = alpha
         self.max_iter = max_iter
+        self.activation_string = activation
         self.activation = functions[activation]
         self.misses = []
         self.weights = None
@@ -49,8 +53,10 @@ class Perceptron:
 
             if mini:
                 X_ = X[np.random.randint(X.shape[0], size=batch_size), :]
+                #y_ = 
             else:
                 X_  = X
+                y_ = y
                 
             for index, x in enumerate(X_):
                 #Place bias term for each x
@@ -60,8 +66,8 @@ class Perceptron:
                 y_hat = self.activation(np.dot(x.T, w))
                 
                 #Update if missclassified
-                if y_hat - y[index] != 0:
-                    w += self.alpha * ((y[index] - y_hat) * x)
+                if y_hat - y_[index] != 0:
+                    w += self.alpha * ((y_[index] - y_hat) * x)
                     loss += 1
         
             misses.append(loss)
