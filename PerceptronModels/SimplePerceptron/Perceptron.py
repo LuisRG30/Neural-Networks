@@ -72,6 +72,7 @@ class Perceptron:
         #Returns some y
         y_hat = []
         for x in X:
+            x = np.insert(x, 0 , 1).reshape(-1, 1)
             y_hat.append(self.activation(np.dot(x.T, self.weights)))
         return y_hat
 
@@ -82,6 +83,7 @@ class Perceptron:
 
         n = 0
         for index, x in enumerate(X_test):
+            x = np.insert(x, 0 , 1).reshape(-1, 1)
             if self.activation(np.dot(x.T, self.weights)) != y_test[index]:
                 n += 1
             
