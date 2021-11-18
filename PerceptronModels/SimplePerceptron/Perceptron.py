@@ -16,7 +16,7 @@ def tanh(z):
     return round((m.exp(z) - m.exp(-z))/(m.exp(z) + m.exp(-z)))
 
 def svm(z):
-    return 0
+    return relu(z)
 
 functions = {
     'step': step,
