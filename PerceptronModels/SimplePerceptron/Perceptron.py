@@ -46,22 +46,24 @@ class Perceptron:
         iter = 0
         while iter < self.max_iter:
             loss = 0
-            if mini:
-                pass
 
+            if mini:
+                X_ = X[np.random.randint(X.shape[0], size=batch_size), :]
             else:
-                for index, x in enumerate(X):
-                    #Place bias term for each x
-                    x = np.insert(x, 0 , 1).reshape(-1, 1)
-                    
-                    #Evaluate activation function: Dot product of parameters with weights
-                    y_hat = self.activation(np.dot(x.T, w))
-                    
-                    #Update if missclassified
-                    if y_hat - y[index] != 0:
-                        w += self.alpha * ((y[index] - y_hat) * x)
-                        loss += 1
-            
+                X_  = X
+                
+            for index, x in enumerate(X_):
+                #Place bias term for each x
+                x = np.insert(x, 0 , 1).reshape(-1, 1)
+                
+                #Evaluate activation function: Dot product of parameters with weights
+                y_hat = self.activation(np.dot(x.T, w))
+                
+                #Update if missclassified
+                if y_hat - y[index] != 0:
+                    w += self.alpha * ((y[index] - y_hat) * x)
+                    loss += 1
+        
             misses.append(loss)
             iter += 1
         
