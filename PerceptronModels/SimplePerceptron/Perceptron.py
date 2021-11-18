@@ -32,7 +32,7 @@ class Perceptron:
         self.misses = []
         self.weights = None
 
-    def fit(self, X, y, mini=False, batch_size=0.05):
+    def fit(self, X, y, mini=False, batch_size=64):
         #m: Samples. n: Features.
         m, n = X.shape
 
@@ -83,7 +83,8 @@ class Perceptron:
 
         n = 0
         for index, x in enumerate(X_test):
-            x_ = np.insert(x, 0 , 1).reshape(-1, 1)
+            x_ = x
+            x_ = np.insert(x_, 0 , 1).reshape(-1, 1)
             if self.activation(np.dot(x_.T, self.weights)) != y_test[index]:
                 n += 1
             
