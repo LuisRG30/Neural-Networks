@@ -67,7 +67,10 @@ class Perceptron:
                 
                 #Update if missclassified
                 if y_hat - y_[index] != 0:
-                    w += self.alpha * ((y_[index] - y_hat) * x)
+                    if self.activation_string == 'svm':
+                        w += self.alpha * (y_[index] * x)
+                    else:
+                        w += self.alpha * ((y_[index] - y_hat) * x)
                     loss += 1
         
             misses.append(loss)
