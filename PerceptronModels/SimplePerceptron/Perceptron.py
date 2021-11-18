@@ -52,8 +52,9 @@ class Perceptron:
             loss = 0
 
             if mini:
-                X_ = X[np.random.randint(X.shape[0], size=batch_size), :]
-                #y_ = 
+                chosen = np.random.randint(X.shape[0], size=batch_size)
+                X_ = X[chosen, :]
+                y_ = y[chosen]
             else:
                 X_  = X
                 y_ = y
