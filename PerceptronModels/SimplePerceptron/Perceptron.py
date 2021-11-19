@@ -1,5 +1,6 @@
 import numpy as np
 import math as m
+from sklearn.model_selection import train_test_split
 
 def step(z):
     return 1 if (z > 0) else 0
@@ -35,8 +36,9 @@ class Perceptron:
         self.activation = functions[activation]
         self.misses = []
         self.weights = None
+        self.cross_val_history = []
 
-    def fit(self, X, y, mini=False, batch_size=64):
+    def fit(self, X, y, mini=False, batch_size=64, k=1):
         #m: Samples. n: Features.
         m, n = X.shape
 
@@ -45,6 +47,7 @@ class Perceptron:
 
         #Recall misses to show as %
         misses = []
+        cross_val_history = []
 
         #Train
         iter = 0
@@ -58,26 +61,36 @@ class Perceptron:
             else:
                 X_  = X
                 y_ = y
+
+            avg_loss = 0
+            for i in range(k):
+                X_train, y_train, X_test, y_test = train_test_split(X_, y_)
                 
-            for index, x in enumerate(X_):
-                #Place bias term for each x
-                x = np.insert(x, 0 , 1).reshape(-1, 1)
-                
-                #Evaluate activation function: Dot product of parameters with weights
-                y_hat = self.activation(np.dot(x.T, w))
-                
-                #Update if missclassified
-                if y_hat - y_[index] != 0:
-                    if self.activation_string == 'svm':
-                        w += self.alpha * (y_[index] * x)
-                    else:
-                        w += self.alpha * ((y_[index] - y_hat) * x)
-                    loss += 1
-        
-            misses.append(loss)
+                for index, x in enumerate(X_train):
+                    #Place bias term for each x
+                    x = np.insert(x, 0 , 1).reshape(-1, 1)
+                    
+                    #Evaluate activation function: Dot product of parameters with weights
+                    y_hat = self.activation(np.dot(x.T, w))
+                    
+                    #If missclassified
+                    if y_hat - y_[index] != 0:
+                        if self.activation_string == 'svm':
+                            w += self.alpha * (y_[index] * x)
+                        else:
+                            w += self.alpha * ((y_[index] - y_hat) * x)
+
+                        loss += 1
+
+                avg_loss += loss
+            
+            avg_loss /= k
+            misses.append(avg_loss)
             iter += 1
+
         
         self.misses = misses
+        self.cross_val_history = cross_val_history
         self.weights = w
 
     def predict(self, X):
