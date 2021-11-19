@@ -107,7 +107,7 @@ class Perceptron:
         for index, x in enumerate(X_test):
             x_ = x
             x_ = np.insert(x_, 0 , 1).reshape(-1, 1)
-            if self.activation(np.dot(x_.T, self.weights)) != y_test[index]:
+            if self.activation(np.dot(x_.T, self.weights)) == y_test[index]:
                 n += 1
             
         return n / N
