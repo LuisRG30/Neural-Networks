@@ -1,5 +1,6 @@
 import numpy as np
 import math as m
+from sklearn.model_selection import train_test_split
 
 def step(z):
     return 1 if (z > 0) else 0
@@ -15,12 +16,15 @@ def tanh(z):
     z -= 0.5
     return round((m.exp(z) - m.exp(-z))/(m.exp(z) + m.exp(-z)))
 
+def svm(z):
+    return relu(z)
 
 functions = {
     'step': step,
     'relu': relu,
     'sigmoid': sigmoid,
     'tanh': tanh,
+    'svm': svm
 }
 
 
@@ -28,11 +32,12 @@ class Perceptron:
     def __init__(self, alpha=0.001, max_iter=1000, activation='step'):
         self.alpha = alpha
         self.max_iter = max_iter
+        self.activation_string = activation
         self.activation = functions[activation]
         self.misses = []
         self.weights = None
 
-    def fit(self, X, y, mini=False, batch_size=64):
+    def fit(self, X, y, mini=False, batch_size=64, k=1):
         #m: Samples. n: Features.
         m, n = X.shape
 
@@ -46,24 +51,41 @@ class Perceptron:
         iter = 0
         while iter < self.max_iter:
             loss = 0
-            if mini:
-                pass
 
+            if mini:
+                chosen = np.random.randint(X.shape[0], size=batch_size)
+                X_ = X[chosen, :]
+                y_ = y[chosen]
             else:
-                for index, x in enumerate(X):
+                X_  = X
+                y_ = y
+
+            avg_loss = 0
+            for i in range(k):
+                X_train, y_train, X_test, y_test = train_test_split(X_, y_)
+                
+                for index, x in enumerate(X_train):
                     #Place bias term for each x
                     x = np.insert(x, 0 , 1).reshape(-1, 1)
                     
                     #Evaluate activation function: Dot product of parameters with weights
                     y_hat = self.activation(np.dot(x.T, w))
                     
-                    #Update if missclassified
-                    if y_hat - y[index] != 0:
-                        w += self.alpha * ((y[index] - y_hat) * x)
+                    #If missclassified
+                    if y_hat - y_[index] != 0:
+                        if self.activation_string == 'svm':
+                            w += self.alpha * (y_[index] * x)
+                        else:
+                            w += self.alpha * ((y_[index] - y_hat) * x)
+
                         loss += 1
+
+                avg_loss += loss
             
-            misses.append(loss)
+            avg_loss /= k
+            misses.append(avg_loss)
             iter += 1
+
         
         self.misses = misses
         self.weights = w
@@ -85,7 +107,7 @@ class Perceptron:
         for index, x in enumerate(X_test):
             x_ = x
             x_ = np.insert(x_, 0 , 1).reshape(-1, 1)
-            if self.activation(np.dot(x_.T, self.weights)) != y_test[index]:
+            if self.activation(np.dot(x_.T, self.weights)) == y_test[index]:
                 n += 1
             
         return n / N
