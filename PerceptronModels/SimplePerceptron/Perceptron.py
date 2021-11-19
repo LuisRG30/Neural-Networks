@@ -36,7 +36,6 @@ class Perceptron:
         self.activation = functions[activation]
         self.misses = []
         self.weights = None
-        self.cross_val_history = []
 
     def fit(self, X, y, mini=False, batch_size=64, k=1):
         #m: Samples. n: Features.
@@ -47,7 +46,6 @@ class Perceptron:
 
         #Recall misses to show as %
         misses = []
-        cross_val_history = []
 
         #Train
         iter = 0
@@ -90,7 +88,6 @@ class Perceptron:
 
         
         self.misses = misses
-        self.cross_val_history = cross_val_history
         self.weights = w
 
     def predict(self, X):
